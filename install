@@ -1,0 +1,12 @@
+#!/bin/sh
+test $UID -eq 0 && echo "Don't run me as root!" && exit
+curl https://nixos.org/nix/install | $SHELL
+source $HOME/.nix-profile/etc/profile.d/nix.sh
+nix-env -iA nixpkgs.git
+tmp=`mktemp -d`
+git clone https://github.com/elitak/nixpkg-jumpcutter "$tmp"
+pushd "$tmp"
+nix-build
+nix-env -i ./result
+popd
+rm -rf "$tmp"
